@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logbook Teknisi - Stasiun Geofisika Deli Serdang</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f0f4f8; color: #1e293b; line-height: 1.5; }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+    header { background: #0f766e; color: white; padding: 20px; border-radius: 12px; margin-bottom: 24px; text-align: center; }
+    h1 { font-size: 1.6rem; }
+    .subtitle { opacity: 0.9; font-size: 0.95rem; }
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.9rem; }
+    input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; margin-bottom: 14px; }
+    textarea { min-height: 90px; resize: vertical; }
+    button { background: #0f766e; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; }
+    button:hover { background: #0d9488; }
+    button.secondary { background: #64748b; margin-left: 8px; }
+    button.danger { background: #dc2626; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f1f5f9; font-weight: 600; }
+    .actions { white-space: nowrap; }
+    .actions button { padding: 6px 10px; font-size: 0.85rem; margin: 0 2px; }
+    .empty { text-align: center; color: #64748b; padding: 30px; }
+    @media (max-width: 600px) {
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Logbook Teknisi</h1>
+      <div class="subtitle">Stasiun Geofisika Deli Serdang • BMKG</div>
+    </header>
+
+    <!-- Form Input -->
+    <div class="card">
+      <h2 style="margin-bottom: 16px;">Tambah Catatan Baru</h2>
+      <form id="logForm">
+        <label>Tanggal & Waktu</label>
+        <input type="datetime-local" id="waktu" required>
+
+        <label>Nama Teknisi</label>
+        <input type="text" id="teknisi" placeholder="Contoh: Andi Pratama" required>
+
+        <label>Jenis Kegiatan</label>
+        <select id="kegiatan" required>
+          <option value="">-- Pilih --</option>
+          <option>Pemeriksaan Rutin Seismograf</option>
+          <option>Kalibrasi Sensor</option>
+          <option>Penggantian Komponen</option>
+          <option>Pemeliharaan Jaringan Data</option>
+          <option>Pemantauan Gempa / Tsunami</option>
+          <option>Pembersihan Peralatan</option>
+          <option>Lainnya</option>
+        </select>
+
+        <label>Status Peralatan</label>
+        <select id="status" required>
+          <option value="Normal">Normal / Baik</option>
+          <option value="Perlu Perhatian">Perlu Perhatian</option>
+          <option value="Rusak">Rusak / Tidak Berfungsi</option>
+          <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+        </select>
+
+        <label>Catatan / Observasi</label>
+        <textarea id="catatan" placeholder="Tuliskan detail pekerjaan, hasil pemeriksaan, atau masalah yang ditemukan..." required></textarea>
+
+        <button type="submit">Simpan Catatan</button>
+        <button type="button" class="secondary" onclick="resetForm()">Reset</button>
+      </form>
+    </div>
+
+    <!-- Daftar Log -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h2>Daftar Logbook</h2>
+        <button class="secondary" onclick="exportCSV()">Export CSV</button>
+      </div>
+      <div id="logList"></div>
+    </div>
+  </div>
+
+  <script>
+    // Set waktu default ke sekarang
+    document.getElementById('waktu').value = new Date().toISOString().slice(0, 16);
+
+    // Ambil data dari localStorage
+    function getLogs() {
+      return JSON.parse(localStorage.getItem('logbook_ds') || '[]');
+    }
+
+    // Simpan data
+    function saveLogs(logs) {
+      localStorage.setItem('logbook_ds', JSON.stringify(logs));
+    }
+
+    // Tampilkan daftar
+    function renderLogs() {
+      const logs = getLogs().sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
+      const container = document.getElementById('logList');
+
+      if (logs.length === 0) {
+        container.innerHTML = '<div class="empty">Belum ada catatan. Silakan isi form di atas.</div>';
+        return;
+      }
+
+      let html = `
+        <table>
+          <thead>
+            <tr>
+              <th>Waktu</th>
+              <th>Teknisi</th>
+              <th>Kegiatan</th>
+              <th>Status</th>
+              <th>Catatan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      logs.forEach((log, index) => {
+        const waktu = new Date(log.waktu).toLocaleString('id-ID');
+        html += `
+          <tr>
+            <td>${waktu}</td>
+            <td>${log.teknisi}</td>
+            <td>${log.kegiatan}</td>
+            <td>${log.status}</td>
+            <td>${log.catatan}</td>
+            <td class="actions">
+              <button class="danger" onclick="hapusLog(${index})">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    }
+
+    // Submit form
+    document.getElementById('logForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const newLog = {
+        id: Date.now(),
+        waktu: document.getElementById('waktu').value,
+        teknisi: document.getElementById('teknisi').value.trim(),
+        kegiatan: document.getElementById('kegiatan').value,
+        status: document.getElementById('status').value,
+        catatan: document.getElementById('catatan').value.trim()
+      };
+
+      const logs = getLogs();
+      logs.push(newLog);
+      saveLogs(logs);
+      renderLogs();
+      resetForm();
+      alert('Catatan berhasil disimpan!');
+    });
+
+    function resetForm() {
+      document.getElementById('logForm').reset();
+      document.getElementById('waktu').value = new Date().toISOString().slice(0, 16);
+    }
+
+    function hapusLog(index) {
+      if (!confirm('Yakin ingin menghapus catatan ini?')) return;
+      const logs = getLogs().sort((a, b) => new Date(b.waktu) - new Date(a.waktu));
+      logs.splice(index, 1);
+      saveLogs(logs);
+      renderLogs();
+    }
+
+    // Export ke CSV
+    function exportCSV() {
+      const logs = getLogs();
+      if (logs.length === 0) {
+        alert('Tidak ada data untuk diekspor.');
+        return;
+      }
+
+      let csv = 'Waktu,Teknisi,Kegiatan,Status,Catatan\n';
+      logs.forEach(log => {
+        const waktu = new Date(log.waktu).toLocaleString('id-ID');
+        csv += `"${waktu}","${log.teknisi}","${log.kegiatan}","${log.status}","${log.catatan.replace(/"/g, '""')}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `logbook_deli_serdang_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+    }
+
+    // Tampilkan saat halaman dimuat
+    renderLogs();
+  </script>
+</body>
+</html>
