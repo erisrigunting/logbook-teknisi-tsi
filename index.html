@@ -13,22 +13,58 @@
     .badge-perhatian { @apply bg-amber-100 text-amber-800; }
     .badge-rusak { @apply bg-red-100 text-red-800; }
     .badge-perbaikan { @apply bg-blue-100 text-blue-800; }
+    
+    /* Warna kuning-oranye untuk judul */
+    .title-orange {
+      color: #f59e0b; /* amber-500 */
+      text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-  <!-- Header -->
-  <header class="bg-gradient-to-r from-teal-700 to-teal-600 text-white shadow-lg">
-    <div class="max-w-6xl mx-auto px-4 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <h1 class="text-2xl font-bold flex items-center gap-2">
-          <i class="fa-solid fa-book-journal-whills"></i>
-          Logbook Teknisi
-        </h1>
-        <p class="text-teal-100 text-sm mt-1">Stasiun Geofisika Deli Serdang • BMKG</p>
+  <!-- ====================== HEADER BARU ====================== -->
+  <header class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white shadow-xl">
+    <div class="max-w-6xl mx-auto px-4 py-6">
+      
+      <!-- Baris atas: Logo + Info -->
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <div class="flex items-center gap-3">
+          <!-- Logo BMKG (ganti dengan URL logo resmi jika ada) -->
+          <div class="bg-white rounded-full p-1.5 shadow-md">
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo_BMKG.svg/200px-Logo_BMKG.svg.png" 
+              alt="Logo BMKG" 
+              class="w-12 h-12 object-contain"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+            <!-- Fallback jika gambar gagal load -->
+            <div class="w-12 h-12 bg-green-700 rounded-full hidden items-center justify-center text-white font-bold text-sm">
+              BMKG
+            </div>
+          </div>
+          <div>
+            <p class="text-green-100 text-sm font-medium">Badan Meteorologi, Klimatologi, dan Geofisika</p>
+            <p class="text-green-200 text-xs">Stasiun Geofisika Deli Serdang</p>
+          </div>
+        </div>
+
+        <div class="text-right text-sm text-green-100">
+          <div class="flex items-center gap-2 justify-end">
+            <i class="fa-solid fa-cloud"></i>
+            <span>Data tersimpan di cloud • Real-time</span>
+          </div>
+        </div>
       </div>
-      <div class="text-sm text-teal-100">
-        Data tersimpan di cloud • Real-time
+
+      <!-- Judul utama di tengah -->
+      <div class="text-center py-2 border-t border-green-500/40">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wide title-orange flex items-center justify-center gap-3">
+          <i class="fa-solid fa-book-journal-whills text-amber-400"></i>
+          LOGBOOK TEKNISI
+          <i class="fa-solid fa-book-journal-whills text-amber-400"></i>
+        </h1>
+        <p class="text-green-100 text-sm mt-1 tracking-wider">STASIUN GEOFISIKA DELI SERDANG</p>
       </div>
     </div>
   </header>
@@ -38,7 +74,7 @@
     <!-- Form Card -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
       <h2 class="text-lg font-semibold mb-5 flex items-center gap-2">
-        <i class="fa-solid fa-plus-circle text-teal-600"></i>
+        <i class="fa-solid fa-plus-circle text-green-700"></i>
         Tambah Catatan Baru
       </h2>
 
@@ -46,19 +82,19 @@
         <div>
           <label class="block text-sm font-medium mb-1">Tanggal & Waktu</label>
           <input type="datetime-local" id="waktu" required
-            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition">
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition">
         </div>
 
         <div>
           <label class="block text-sm font-medium mb-1">Nama Teknisi</label>
           <input type="text" id="teknisi" required placeholder="Contoh: Andi Pratama"
-            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition">
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition">
         </div>
 
         <div>
           <label class="block text-sm font-medium mb-1">Jenis Kegiatan</label>
           <select id="kegiatan" required
-            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition">
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition">
             <option value="">-- Pilih Kegiatan --</option>
             <option>Pemeriksaan Rutin Seismograf</option>
             <option>Kalibrasi Sensor</option>
@@ -73,7 +109,7 @@
         <div>
           <label class="block text-sm font-medium mb-1">Status Peralatan</label>
           <select id="status" required
-            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition">
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition">
             <option value="Normal">Normal / Baik</option>
             <option value="Perlu Perhatian">Perlu Perhatian</option>
             <option value="Rusak">Rusak / Tidak Berfungsi</option>
@@ -84,12 +120,12 @@
         <div class="md:col-span-2">
           <label class="block text-sm font-medium mb-1">Catatan / Observasi</label>
           <textarea id="catatan" rows="3" required placeholder="Tuliskan detail pekerjaan, hasil pemeriksaan, atau masalah..."
-            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition"></textarea>
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition"></textarea>
         </div>
 
         <div class="md:col-span-2 flex gap-3">
           <button type="submit"
-            class="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-2.5 rounded-xl transition flex items-center gap-2">
+            class="bg-green-700 hover:bg-green-800 text-white font-medium px-6 py-2.5 rounded-xl transition flex items-center gap-2">
             <i class="fa-solid fa-save"></i> Simpan Catatan
           </button>
           <button type="button" onclick="resetForm()"
@@ -104,14 +140,14 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h2 class="text-lg font-semibold flex items-center gap-2">
-          <i class="fa-solid fa-list text-teal-600"></i>
+          <i class="fa-solid fa-list text-green-700"></i>
           Daftar Logbook
         </h2>
 
         <div class="relative w-full sm:w-80">
           <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
           <input type="text" id="searchInput" placeholder="Cari teknisi, kegiatan, catatan..."
-            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition text-sm">
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition text-sm">
         </div>
       </div>
 
@@ -142,13 +178,15 @@
 
   <script>
   // ====================== KONFIGURASI SUPABASE ======================
-  const SUPABASE_URL = 'https://jqbevbetdobpshoaglbm.supabase.co';   // ← pastikan URL ini benar
+  const SUPABASE_URL = 'https://jqbevbetdobpshoaglbm.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxYmV2YmV0ZG9icHNob2FnbGJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4Mzg5OTcsImV4cCI6MjEwMzQxNDk5N30.Fw9rhNrJPxFMNqukc5mRVlX5ZKPnwdAz5ax50p_qLgg';
 
-  // Inisialisasi yang benar
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // Set waktu default
+  // ========== PENGATURAN ADMIN ==========
+  // Ganti password admin di sini
+  const ADMIN_PASSWORD = 'bmkg2024';   // ← Ganti sesuai keinginan
+
   document.getElementById('waktu').value = new Date().toISOString().slice(0, 16);
 
   let allLogs = [];
@@ -260,8 +298,18 @@
     loadLogs();
   });
 
-  // Hapus data
+  // ========== HAPUS HANYA UNTUK ADMIN ==========
   async function hapusLog(id) {
+    // Minta password admin
+    const password = prompt('Masukkan password Admin untuk menghapus data:');
+
+    if (password === null) return; // User klik Cancel
+
+    if (password !== ADMIN_PASSWORD) {
+      alert('Password salah! Hanya Admin yang boleh menghapus data.');
+      return;
+    }
+
     if (!confirm('Yakin ingin menghapus catatan ini?')) return;
 
     const { error } = await supabaseClient.from('logbook').delete().eq('id', id);
@@ -271,6 +319,7 @@
       return;
     }
 
+    alert('Data berhasil dihapus.');
     loadLogs();
   }
 
