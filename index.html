@@ -154,7 +154,7 @@
               <th class="text-left py-3 px-4 font-medium">Teknisi</th>
               <th class="text-left py-3 px-4 font-medium">Kegiatan</th>
               <th class="text-left py-3 px-4 font-medium">Status</th>
-              <th class="text-left py-3 px-4 font-medium">Catatan</th>
+              <th class="text-left py-3 px-4 font-medium min-w-[200px]">Catatan</th>
               <th class="text-left py-3 px-4 font-medium" id="aksiHeader">Aksi</th>
             </tr>
           </thead>
@@ -234,7 +234,6 @@
   let allLogs = [];
 
   // ========== FUNGSI WAKTU (WIB) ==========
-  // Ambil waktu lokal komputer (untuk input datetime-local)
   function getLocalDateTimeLocal() {
     const now = new Date();
     const year = now.getFullYear();
@@ -245,28 +244,21 @@
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  // Konversi nilai datetime-local ke string ISO dengan offset WIB (+07:00)
-  // Contoh: "2026-08-28T16:09"  →  "2026-08-28T16:09:00+07:00"
   function toWIBISO(datetimeLocalValue) {
     if (!datetimeLocalValue) return null;
-    // Pastikan ada detik
     const withSeconds = datetimeLocalValue.length === 16
       ? datetimeLocalValue + ':00'
       : datetimeLocalValue;
     return withSeconds + '+07:00';
   }
 
-  // Format waktu dari database agar tampil sesuai WIB
   function formatWaktuWIB(waktuStr) {
     if (!waktuStr) return '-';
 
-    // Jika string tanpa timezone (format lama), anggap sudah WIB
-    // dan tampilkan langsung tanpa konversi zona
     const hasTimezone = /[Zz]|[+-]\d{2}:\d{2}$/.test(waktuStr);
 
     if (!hasTimezone) {
-      // Format: 2026-08-28T16:09:00 atau 2026-08-28 16:09:00
-      const clean = waktuStr.replace(' ', 'T').slice(0, 16); // YYYY-MM-DDTHH:mm
+      const clean = waktuStr.replace(' ', 'T').slice(0, 16);
       const [datePart, timePart] = clean.split('T');
       if (!datePart || !timePart) return waktuStr;
 
@@ -276,7 +268,6 @@
       return `${d} ${bulanNama} ${y}, ${timePart}`;
     }
 
-    // Jika sudah ada timezone, konversi ke Asia/Jakarta
     const d = new Date(waktuStr);
     if (isNaN(d.getTime())) return waktuStr;
 
@@ -291,7 +282,6 @@
     });
   }
 
-  // Set waktu default
   document.getElementById('waktu').value = getLocalDateTimeLocal();
 
   // ========== ADMIN UI ==========
@@ -405,17 +395,26 @@
         </td>
       ` : '';
 
+      // Escape HTML agar aman + ganti baris baru jadi <br>
+      const catatanRaw = log.catatan || '-';
+      const catatanSafe = catatanRaw
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/\n/g, '<br>');
+
       return `
         <tr class="hover:bg-slate-50 transition">
-          <td class="py-3 px-4 whitespace-nowrap">${waktu}</td>
-          <td class="py-3 px-4 font-medium">${log.teknisi}</td>
-          <td class="py-3 px-4">${log.kegiatan}</td>
-          <td class="py-3 px-4">
+          <td class="py-3 px-4 whitespace-nowrap align-top">${waktu}</td>
+          <td class="py-3 px-4 font-medium align-top">${log.teknisi}</td>
+          <td class="py-3 px-4 align-top">${log.kegiatan}</td>
+          <td class="py-3 px-4 align-top">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeClass}">
               ${log.status}
             </span>
           </td>
-          <td class="py-3 px-4 max-w-xs truncate" title="${log.catatan || ''}">${log.catatan || '-'}</td>
+          <td class="py-3 px-4 max-w-md whitespace-normal break-words align-top leading-relaxed">${catatanSafe}</td>
           ${aksiCell}
         </tr>
       `;
@@ -445,10 +444,9 @@
   document.getElementById('logForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const waktuLocal = document.getElementById('waktu').value; // contoh: 2026-08-28T16:09
+    const waktuLocal = document.getElementById('waktu').value;
 
     const newLog = {
-      // Simpan dengan offset WIB agar tidak digeser oleh Supabase
       waktu: toWIBISO(waktuLocal),
       teknisi: document.getElementById('teknisi').value.trim(),
       kegiatan: document.getElementById('kegiatan').value,
