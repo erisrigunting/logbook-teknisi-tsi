@@ -21,7 +21,6 @@
   <header class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white shadow-xl">
     <div class="max-w-6xl mx-auto px-4 py-6">
       
-      <!-- Baris atas: Logo + Info -->
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
         <div class="flex items-center gap-3">
           <div class="bg-white rounded-full p-1.5 shadow-md flex-shrink-0">
@@ -49,7 +48,6 @@
         </div>
       </div>
 
-      <!-- Judul utama di tengah -->
       <div class="text-center py-2 border-t border-green-500/40">
         <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wide title-orange flex items-center justify-center gap-3">        
           LOGBOOK TEKNISI
@@ -120,8 +118,18 @@
             class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition"></textarea>
         </div>
 
+        <!-- Upload Dokumen PDF -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium mb-1">
+            Dokumen PDF <span class="text-slate-400 font-normal">(opsional)</span>
+          </label>
+          <input type="file" id="dokumen" accept=".pdf,application/pdf"
+            class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition text-sm file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-green-50 file:text-green-700 file:font-medium hover:file:bg-green-100">
+          <p class="text-xs text-slate-400 mt-1">Hanya file PDF. Maks. 10 MB.</p>
+        </div>
+
         <div class="md:col-span-2 flex gap-3">
-          <button type="submit"
+          <button type="submit" id="btnSubmit"
             class="bg-green-700 hover:bg-green-800 text-white font-medium px-6 py-2.5 rounded-xl transition flex items-center gap-2">
             <i class="fa-solid fa-save"></i> Simpan Catatan
           </button>
@@ -157,6 +165,7 @@
               <th class="text-left py-3 px-4 font-medium">Kegiatan</th>
               <th class="text-left py-3 px-4 font-medium">Status</th>
               <th class="text-left py-3 px-4 font-medium min-w-[200px]">Catatan</th>
+              <th class="text-left py-3 px-4 font-medium">Dokumen</th>
               <th class="text-left py-3 px-4 font-medium" id="aksiHeader">Aksi</th>
             </tr>
           </thead>
@@ -229,21 +238,31 @@
 
   const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // Nama bucket Storage di Supabase (harus dibuat dulu)
+  const STORAGE_BUCKET = 'dokumen-logbook';
+
   // ========== PENGATURAN ADMIN ==========
   const ADMIN_PASSWORD = 'bmkg2024';
 
   let isAdmin = sessionStorage.getItem('isAdmin') === 'true';
   let allLogs = [];
 
-  // ========== FUNGSI WAKTU (WIB) ==========
-  function getLocalDateTimeLocal() {
+  // ========== FUNGSI WAKTU (selalu WIB / Asia/Jakarta) ==========
+  function getWIBDateTimeLocal() {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Jakarta',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).formatToParts(now);
+
+    const get = (type) => parts.find(p => p.type === type)?.value || '00';
+    // en-CA: year-month-day
+    return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`;
   }
 
   function toWIBISO(datetimeLocalValue) {
@@ -267,7 +286,7 @@
       const [y, m, d] = datePart.split('-');
       const bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
       const bulanNama = bulan[parseInt(m, 10) - 1] || m;
-      return `${d} ${bulanNama} ${y}, ${timePart}`;
+      return `${d} ${bulanNama} ${y}, ${timePart} WIB`;
     }
 
     const d = new Date(waktuStr);
@@ -281,10 +300,11 @@
       minute: '2-digit',
       timeZone: 'Asia/Jakarta',
       hour12: false
-    });
+    }) + ' WIB';
   }
 
-  document.getElementById('waktu').value = getLocalDateTimeLocal();
+  // Set default waktu ke WIB
+  document.getElementById('waktu').value = getWIBDateTimeLocal();
 
   // ========== ADMIN UI ==========
   function updateAdminUI() {
@@ -347,6 +367,40 @@
     }
   }
 
+  // ========== UPLOAD PDF ==========
+  async function uploadPDF(file) {
+    if (!file) return null;
+
+    // Validasi
+    if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+      throw new Error('Hanya file PDF yang diizinkan.');
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      throw new Error('Ukuran file maksimal 10 MB.');
+    }
+
+    const timestamp = Date.now();
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `${timestamp}_${safeName}`;
+
+    const { data, error } = await supabaseClient.storage
+      .from(STORAGE_BUCKET)
+      .upload(path, file, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: 'application/pdf'
+      });
+
+    if (error) throw error;
+
+    // Ambil public URL
+    const { data: urlData } = supabaseClient.storage
+      .from(STORAGE_BUCKET)
+      .getPublicUrl(path);
+
+    return urlData?.publicUrl || null;
+  }
+
   // ========== LOAD & RENDER ==========
   async function loadLogs() {
     const { data, error } = await supabaseClient
@@ -390,7 +444,7 @@
       if (log.status === 'Dalam Perbaikan') badgeClass = 'bg-blue-100 text-blue-800';
 
       const aksiCell = isAdmin ? `
-        <td class="py-3 px-4">
+        <td class="py-3 px-4 align-top">
           <button onclick="hapusLog(${log.id})"
             class="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1">
             <i class="fa-solid fa-trash"></i> Hapus
@@ -398,7 +452,6 @@
         </td>
       ` : '';
 
-      // Escape HTML agar aman + ganti baris baru jadi <br>
       const catatanRaw = log.catatan || '-';
       const catatanSafe = catatanRaw
         .replace(/&/g, '&amp;')
@@ -407,17 +460,32 @@
         .replace(/"/g, '&quot;')
         .replace(/\n/g, '<br>');
 
+      // Kolom Dokumen (setelah Catatan)
+      let dokumenCell = `<td class="py-3 px-4 align-top text-slate-400 text-xs">-</td>`;
+      if (log.dokumen_url) {
+        dokumenCell = `
+          <td class="py-3 px-4 align-top">
+            <a href="${log.dokumen_url}" target="_blank" rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 text-red-600 hover:text-red-800 text-sm font-medium">
+              <i class="fa-solid fa-file-pdf"></i>
+              Lihat PDF
+            </a>
+          </td>
+        `;
+      }
+
       return `
         <tr class="hover:bg-slate-50 transition">
           <td class="py-3 px-4 whitespace-nowrap align-top">${waktu}</td>
-          <td class="py-3 px-4 font-medium align-top">${log.teknisi}</td>
-          <td class="py-3 px-4 align-top">${log.kegiatan}</td>
+          <td class="py-3 px-4 font-medium align-top">${log.teknisi || '-'}</td>
+          <td class="py-3 px-4 align-top">${log.kegiatan || '-'}</td>
           <td class="py-3 px-4 align-top">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badgeClass}">
-              ${log.status}
+              ${log.status || '-'}
             </span>
           </td>
           <td class="py-3 px-4 max-w-md whitespace-normal break-words align-top leading-relaxed">${catatanSafe}</td>
+          ${dokumenCell}
           ${aksiCell}
         </tr>
       `;
@@ -443,30 +511,48 @@
     renderLogs(filtered);
   });
 
-  // ========== SIMPAN (dengan timezone WIB) ==========
+  // ========== SIMPAN ==========
   document.getElementById('logForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const waktuLocal = document.getElementById('waktu').value;
+    const btn = document.getElementById('btnSubmit');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
 
-    const newLog = {
-      waktu: toWIBISO(waktuLocal),
-      teknisi: document.getElementById('teknisi').value.trim(),
-      kegiatan: document.getElementById('kegiatan').value,
-      status: document.getElementById('status').value,
-      catatan: document.getElementById('catatan').value.trim()
-    };
+    try {
+      const waktuLocal = document.getElementById('waktu').value;
+      const fileInput = document.getElementById('dokumen');
+      const file = fileInput.files[0] || null;
 
-    const { error } = await supabaseClient.from('logbook').insert([newLog]);
+      let dokumenUrl = null;
+      if (file) {
+        dokumenUrl = await uploadPDF(file);
+      }
 
-    if (error) {
-      alert('Gagal menyimpan: ' + error.message);
-      return;
+      const newLog = {
+        waktu: toWIBISO(waktuLocal),
+        teknisi: document.getElementById('teknisi').value.trim(),
+        kegiatan: document.getElementById('kegiatan').value,
+        status: document.getElementById('status').value,
+        catatan: document.getElementById('catatan').value.trim(),
+        dokumen_url: dokumenUrl
+      };
+
+      const { error } = await supabaseClient.from('logbook').insert([newLog]);
+
+      if (error) throw error;
+
+      alert('Catatan berhasil disimpan!');
+      resetForm();
+      loadLogs();
+    } catch (err) {
+      console.error(err);
+      alert('Gagal menyimpan: ' + (err.message || err));
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
     }
-
-    alert('Catatan berhasil disimpan!');
-    resetForm();
-    loadLogs();
   });
 
   // Hapus (admin only)
@@ -491,7 +577,7 @@
 
   function resetForm() {
     document.getElementById('logForm').reset();
-    document.getElementById('waktu').value = getLocalDateTimeLocal();
+    document.getElementById('waktu').value = getWIBDateTimeLocal();
   }
 
   // Inisialisasi
