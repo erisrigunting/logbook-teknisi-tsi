@@ -17,51 +17,60 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-  <!-- ====================== HEADER ====================== -->
-  <header class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white shadow-xl">
-    <div class="max-w-6xl mx-auto px-4 py-6">
-      
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <div class="flex items-center gap-3">
-          <div class="bg-white rounded-full p-1.5 shadow-md flex-shrink-0">
-            <img 
-              src="logo1.png" 
-              alt="Logo BMKG" 
-              class="w-12 h-12 object-contain"
-              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            >
-            <div class="w-12 h-12 bg-green-700 rounded-full hidden items-center justify-center text-white font-bold text-sm">
-              BMKG
-            </div>
-          </div>
-          <div>
-            <p class="text-green-100 text-sm font-medium">Badan Meteorologi, Klimatologi, dan Geofisika</p>
-            <p class="text-green-200 text-xs">Stasiun Geofisika Kelas I Deli Serdang</p>
+ <!-- ====================== HEADER ====================== -->
+<header class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white shadow-xl">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-white rounded-full p-1.5 shadow-md flex-shrink-0">
+          <img 
+            src="logo1.png" 
+            alt="Logo BMKG" 
+            class="w-12 h-12 object-contain"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <div class="w-12 h-12 bg-green-700 rounded-full hidden items-center justify-center text-white font-bold text-sm">
+            BMKG
           </div>
         </div>
-
-        <div class="text-right text-sm text-green-100 hidden sm:block">
-          <div class="flex items-center gap-2 justify-end">
-            <i class="fa-solid fa-cloud"></i>
-            <span>Data cloud • Real-time</span>
-          </div>
+        <div>
+          <p class="text-green-100 text-sm font-medium">Badan Meteorologi, Klimatologi, dan Geofisika</p>
+          <p class="text-green-200 text-xs">Stasiun Geofisika Kelas I Deli Serdang</p>
         </div>
       </div>
 
-      <div class="text-center py-2 border-t border-green-500/40">
-        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wide title-orange flex items-center justify-center gap-3">        
-          LOGBOOK TEKNISI
-        </h1>
-        
-        <div id="adminStatus" class="hidden mt-2">
-          <span class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-200 text-xs font-medium px-3 py-1 rounded-full">
-            <i class="fa-solid fa-shield-halved"></i> Mode Admin Aktif
-          </span>
+      <div class="text-right text-sm text-green-100 hidden sm:block">
+        <div class="flex items-center gap-2 justify-end">
+          <i class="fa-solid fa-cloud"></i>
+          <span>Data cloud • Real-time</span>
         </div>
       </div>
     </div>
-  </header>
 
+    <div class="text-center py-2 border-t border-green-500/40">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wide title-orange flex items-center justify-center gap-3">        
+        LOGBOOK TEKNISI
+      </h1>
+      
+      <div id="adminStatus" class="hidden mt-2">
+        <span class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-200 text-xs font-medium px-3 py-1 rounded-full">
+          <i class="fa-solid fa-shield-halved"></i> Mode Admin Aktif
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Garis tricolor: biru | putih | hijau (batas miring ke kanan) -->
+  <div class="h-2.5 w-full overflow-hidden flex">
+    <!-- Biru (kiri) -->
+    <div class="w-[36%] bg-blue-600 -skew-x-[20deg] origin-bottom scale-x-110 -ml-2"></div>
+    <!-- Putih (tengah) -->
+    <div class="w-[30%] bg-white -skew-x-[20deg] origin-bottom"></div>
+    <!-- Hijau (kanan) -->
+    <div class="flex-1 bg-green-500 -skew-x-[20deg] origin-bottom scale-x-110 -mr-2"></div>
+  </div>
+</header>
   <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
 
     <!-- Form Card -->
