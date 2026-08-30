@@ -17,28 +17,48 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-<!-- ===== HEADER LOGBOOK TEKNISI ===== -->
-<header class="header-logbook">
-  <div class="header-top">
-    <div class="logo">
-      <!-- Ganti src dengan logo BMKG kamu -->
-      <img src="logo1.png" alt="Logo BMKG">
-    </div>
+ <!-- ====================== HEADER ====================== -->
+<header class="bg-gradient-to-r from-green-800 via-green-700 to-green-600 text-white shadow-xl">
+  <div class="max-w-6xl mx-auto px-4 py-6">
     
-    <div class="header-text">
-      <div class="agency-name">
-        Badan Meteorologi,<br>
-        Klimatologi, dan Geofisika
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+      <div class="flex items-center gap-3">
+        <div class="bg-white rounded-full p-1.5 shadow-md flex-shrink-0">
+          <img 
+            src="logo1.png" 
+            alt="Logo BMKG" 
+            class="w-12 h-12 object-contain"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          >
+          <div class="w-12 h-12 bg-green-700 rounded-full hidden items-center justify-center text-white font-bold text-sm">
+            BMKG
+          </div>
+        </div>
+        <div>
+          <p class="text-green-100 text-sm font-medium">Badan Meteorologi, Klimatologi, dan Geofisika</p>
+          <p class="text-green-200 text-xs">Stasiun Geofisika Kelas I Deli Serdang</p>
+        </div>
       </div>
-      <div class="station-name">
-        Stasiun Geofisika Kelas I Deli Serdang
+
+      <div class="text-right text-sm text-green-100 hidden sm:block">
+        <div class="flex items-center gap-2 justify-end">
+          <i class="fa-solid fa-cloud"></i>
+          <span>Data cloud • Real-time</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="title-section">
-    <h1 class="main-title">LOGBOOK TEKNISI</h1>
-    <div class="glow-line"></div>
+    <div class="text-center py-2 border-t border-green-500/40">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wide title-orange flex items-center justify-center gap-3">        
+        LOGBOOK TEKNISI
+      </h1>
+      
+      <div id="adminStatus" class="hidden mt-2">
+        <span class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-200 text-xs font-medium px-3 py-1 rounded-full">
+          <i class="fa-solid fa-shield-halved"></i> Mode Admin Aktif
+        </span>
+      </div>
+    </div>
   </div>
 
   <!-- Garis tricolor: biru | putih | hijau (batas miring ke kanan) -->
@@ -51,168 +71,6 @@
     <div class="flex-1 bg-green-500 -skew-x-[20deg] origin-bottom scale-x-110 -mr-2"></div>
   </div>
 </header>
-
-<style>
-  .header-logbook {
-    width: 100%;
-    background: linear-gradient(135deg, #0a2a35 0%, #0d3d3a 50%, #0a2f2a 100%);
-    padding: 28px 40px 32px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-
-  /* Cahaya lembut di background */
-  .header-logbook::before {
-    content: '';
-    position: absolute;
-    top: -40%;
-    right: -15%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(0, 255, 220, 0.1) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .header-top {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 26px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .logo {
-  width: 90px;               /* Perbesar container */
-  height: 90px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  overflow: hidden;          /* Tetap bulat rapi */
-  padding: 4px;              /* Beri sedikit ruang di dalam */
-}
-
-.logo img {
-  width: 100%;               /* Biarkan mengisi container */
-  height: 100%;
-  object-fit: contain;       /* Tetap jaga proporsi */
-  border-radius: 50%;
-  /* Jangan pakai width & height tetap yang terlalu kecil */
-}
-
-  .header-text {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .agency-name {
-    color: #ffffff;
-    font-size: 21px;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .station-name {
-    color: #a8c5c0;
-    font-size: 15.5px;
-    font-weight: 400;
-  }
-
-  .title-section {
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ===== JUDUL + ANIMASI GLOW ===== */
-  .main-title {
-    font-size: 52px;
-    font-weight: 800;
-    color: #e0ffff;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    animation: glowPulse 3s ease-in-out infinite;
-  }
-
-  @keyframes glowPulse {
-    0%, 100% {
-      text-shadow: 
-        0 0 8px rgba(0, 255, 255, 0.5),
-        0 0 18px rgba(0, 255, 255, 0.35),
-        0 0 30px rgba(0, 255, 255, 0.2);
-    }
-    50% {
-      text-shadow: 
-        0 0 15px rgba(0, 255, 255, 0.9),
-        0 0 30px rgba(0, 255, 255, 0.6),
-        0 0 50px rgba(0, 255, 255, 0.4),
-        0 0 70px rgba(0, 255, 255, 0.2);
-    }
-  }
-
-  /* ===== GARIS GLOW BERGERAK ===== */
-  .glow-line {
-    width: 1440px;
-    height: 3px;
-    margin: 0 auto;
-    border-radius: 3px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      #00e5ff 25%,
-      #00ffff 50%,
-      #00e5ff 75%,
-      transparent 100%
-    );
-    background-size: 200% 100%;
-    animation: lineMove 2.8s linear infinite;
-    box-shadow: 0 0 12px #00ffff, 0 0 25px rgba(0, 255, 255, 0.5);
-  }
-
-  @keyframes lineMove {
-    0% {
-      background-position: 200% 0;
-    }
-    100% {
-      background-position: -200% 0;
-    }
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .header-logbook {
-      padding: 20px 18px 24px;
-    }
-    .header-top {
-      flex-direction: column;
-      text-align: center;
-      gap: 12px;
-    }
-    .agency-name {
-      font-size: 17px;
-    }
-    .station-name {
-      font-size: 14px;
-    }
-    .main-title {
-      font-size: 30px;
-      letter-spacing: 1.5px;
-    }
-    .glow-line {
-      width: 250px;
-    }
-  }
-</style>
-
   <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
 
     <!-- Form Card -->
@@ -247,6 +105,7 @@
             <option>Pembersihan Peralatan</option>
             <option>Corrective Maintenance Seismometer Ina TEWS</option>
             <option>Preventive Maintenance Seismometer Ina TEWS</option>
+            <option>Bimbingan Mahasiswa</option>
             <option>Lainnya</option>
           </select>
         </div>
@@ -256,10 +115,14 @@
           <select id="status" required
             class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition">
             <option value="Normal">Normal / Baik</option>
-            <option value="Terkirim">Dikirim</option>
+            <option value="Dikirim">Dikirim</option>
             <option value="Perlu Perhatian">Perlu Perhatian</option>
             <option value="Rusak">Rusak / Tidak Berfungsi</option>
             <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+            <option value="Dalam Proses">Dalam Proses</option>
+            <option value="Selesai">Selesai</option>
+            <option value="Masa Bimbingan">Masa Bimbingan</option>
+            <option value="Selesai Bimbingan">Selesai Bimbingan</option>
           </select>
         </div>
 
@@ -341,7 +204,7 @@
         <span id="loginText">Login Admin</span>
       </button>
       <p class="text-xs text-slate-400 mt-1">
-        © Stasiun Geofisika Kelas I Deli Serdang • BMKG
+        © Stasiun Geofisika Kelas I Deli Serdang • @erisrigunting 2026
       </p>
     </div>
   </footer>
@@ -589,10 +452,14 @@
 
       let badgeClass = 'bg-slate-100 text-slate-700';
       if (log.status === 'Normal') badgeClass = 'bg-emerald-100 text-emerald-800';
-      if (log.status === 'Terkirim') badgeClass = 'bg-emerald-100 text-emerald-800';
+      if (log.status === 'Dikirim') badgeClass = 'bg-emerald-100 text-emerald-800';
       if (log.status === 'Perlu Perhatian') badgeClass = 'bg-amber-100 text-amber-800';
       if (log.status === 'Rusak') badgeClass = 'bg-red-100 text-red-800';
       if (log.status === 'Dalam Perbaikan') badgeClass = 'bg-blue-100 text-blue-800';
+      if (log.status === 'Dalam Proses') badgeClass = 'bg-amber-100 text-amber-800';
+      if (log.status === 'Selesai') badgeClass = 'bg-emerald-100 text-emerald-800';
+      if (log.status === 'Masa Bimbingan') badgeClass = 'bg-amber-100 text-amber-800';
+      if (log.status === 'Selesai Bimbingan') badgeClass = 'bg-emerald-100 text-emerald-800';
 
       const aksiCell = isAdmin ? `
         <td class="py-3 px-4 align-top">
