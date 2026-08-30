@@ -122,6 +122,7 @@
             <option value="Dalam Proses">Dalam Proses</option>
             <option value="Selesai">Selesai</option>
             <option value="Masa Bimbingan">Masa Bimbingan</option>
+            <option value="Selesai Bimbingan">Masa Bimbingan</option>
           </select>
         </div>
 
@@ -458,6 +459,7 @@
       if (log.status === 'Dalam Proses') badgeClass = 'bg-amber-100 text-amber-800';
       if (log.status === 'Selesai') badgeClass = 'bg-emerald-100 text-emerald-800';
       if (log.status === 'Masa Bimbingan') badgeClass = 'bg-amber-100 text-amber-800';
+      if (log.status === 'Selesai Bimbingan') badgeClass = 'bg-emerald-100 text-emerald-800';
 
       const aksiCell = isAdmin ? `
         <td class="py-3 px-4 align-top">
