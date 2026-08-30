@@ -114,10 +114,12 @@
           <select id="status" required
             class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition">
             <option value="Normal">Normal / Baik</option>
-            <option value="Terkirim">Dikirim</option>
+            <option value="Dikirim">Dikirim</option>
             <option value="Perlu Perhatian">Perlu Perhatian</option>
             <option value="Rusak">Rusak / Tidak Berfungsi</option>
             <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+            <option value="Dalam Proses">Dalam Proses</option>
+            <option value="Selesai">Selesai</option>
           </select>
         </div>
 
@@ -451,6 +453,8 @@
       if (log.status === 'Perlu Perhatian') badgeClass = 'bg-amber-100 text-amber-800';
       if (log.status === 'Rusak') badgeClass = 'bg-red-100 text-red-800';
       if (log.status === 'Dalam Perbaikan') badgeClass = 'bg-blue-100 text-blue-800';
+      if (log.status === 'Dalam Proses') badgeClass = 'bg-amber-100 text-amber-800';
+      if (log.status === 'Selesai') badgeClass = 'bg-emerald-100 text-emerald-800';
 
       const aksiCell = isAdmin ? `
         <td class="py-3 px-4 align-top">
