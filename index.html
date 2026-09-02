@@ -133,6 +133,7 @@
           <select id="status" required
             class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-green-600 focus:border-green-600 outline-none transition">
             <option value="Normal">Normal / Baik</option>
+            <option value="Monitoring">Monitoring</option>
             <option value="Dikirim">Dikirim</option>
             <option value="Perlu Perhatian">Perlu Perhatian</option>
             <option value="Rusak">Rusak / Tidak Berfungsi</option>
@@ -470,6 +471,7 @@
 
       let badgeClass = 'bg-slate-100 text-slate-700';
       if (log.status === 'Normal') badgeClass = 'bg-emerald-100 text-emerald-800';
+      if (log.status === 'Monitoring') badgeClass = 'bg-emerald-100 text-emerald-800';
       if (log.status === 'Dikirim') badgeClass = 'bg-emerald-100 text-emerald-800';
       if (log.status === 'Perlu Perhatian') badgeClass = 'bg-amber-100 text-amber-800';
       if (log.status === 'Rusak') badgeClass = 'bg-red-100 text-red-800';
